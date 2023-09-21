@@ -3,10 +3,10 @@ import React from "react";
 import { styles } from "../styles/styles";
 import { tracks } from "../../assets/data/tracks";
 import { Ionicons } from "@expo/vector-icons";
-
-const track = tracks[0];
+import { usePlayerContext } from "../providers/PlayerProvider";
 
 const Player = () => {
+  const { track } = usePlayerContext();
   if (!track) {
     return null;
   }
