@@ -55,9 +55,41 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
-    borderBottomColor: "rgba(255, 255, 255, 0.3)",
-    borderBottomWidth: 1.5,
     marginHorizontal: 10,
     padding: 3,
+  },
+  PlayerScreen: {
+    flex: 1,
+    paddingHorizontal: 25,
+  },
+  PlayerImage: {
+    width: "100%",
+    aspectRatio: 1,
+    resizeMode: "contain",
+    marginVertical: 67,
+  },
+  PlayerIcon: {
+    width: 25,
+    aspectRatio: 1,
+    resizeMode: "contain",
+  },
+  PlayPauseButton: {
+    width: 75,
+    aspectRatio: 1,
+    borderRadius: 40,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  PlayPauseIcon: {
+    width: 25,
+    aspectRatio: 1,
+    resizeMode: "center",
+  },
+  slider: {
+    width: "100%",
+    height: 2,
+    position: "absolute",
+    bottom: 0,
   },
 });

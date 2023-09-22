@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable, PressableProps } from "react-native";
 import React, { useEffect, useState } from "react";
 import { styles } from "../styles/styles";
 import { tracks } from "../../assets/data/tracks";
@@ -7,12 +7,15 @@ import { usePlayerContext } from "../providers/PlayerProvider";
 import { Audio } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
 import { AVPlaybackStatus } from "expo-av/build/AV.types";
+import PlayerScreen from "../screens/PlayerScreen";
+import Slider from "@react-native-community/slider";
 
 const Player = () => {
   const [sound, setSound] = useState<Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const { track } = usePlayerContext();
-
+  const [status, setStatus] = useState<AVPlaybackStatus | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     playTrack();
   }, [track]);
@@ -40,7 +43,7 @@ const Player = () => {
 
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded) return;
-
+    setStatus(status);
     setIsPlaying(status.isPlaying);
   };
 
@@ -58,16 +61,24 @@ const Player = () => {
   }
   return (
     <View style={styles.Player}>
-      <Image
-        source={{ uri: track.album.images[0]?.url }}
-        style={[styles.trackImage, { margin: 4 }]}
-      />
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: "white", fontWeight: "500", fontSize: 15 }}>
-          {track.name}
-        </Text>
-        <Text style={{ color: "gray" }}>{track.artists[0]?.name}</Text>
-      </View>
+      <Pressable
+        style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+        onPress={() => setIsVisible(!isVisible)}
+      >
+        <Image
+          source={{ uri: track.album.images[0]?.url }}
+          style={[styles.trackImage, { margin: 4 }]}
+        />
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{ color: "white", fontWeight: "500", fontSize: 15 }}
+            numberOfLines={1}
+          >
+            {track.name}
+          </Text>
+          <Text style={{ color: "gray" }}>{track.artists[0]?.name}</Text>
+        </View>
+      </Pressable>
       <Ionicons
         name={"heart-outline"}
         color={"white"}
@@ -80,6 +91,23 @@ const Player = () => {
         color={"white"}
         size={25}
         style={{ marginHorizontal: 10 }}
+      />
+      <PlayerScreen
+        track={track}
+        status={status}
+        isVisible={isVisible}
+        onClose={() => setIsVisible(false)}
+        onPlayPause={onPlayPause}
+        isPlaying={isPlaying}
+      />
+      <Slider
+        style={styles.slider}
+        minimumValue={0}
+        maximumValue={status?.durationMillis}
+        minimumTrackTintColor="#eee"
+        thumbTintColor="transparent"
+        maximumTrackTintColor="#ffffff"
+        value={status?.positionMillis}
       />
     </View>
   );

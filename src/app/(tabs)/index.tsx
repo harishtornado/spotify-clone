@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TrackListItem from "../../components/TrackListItem";
 import { styles } from "../../styles/styles";
 import Player from "../../components/Player";
+import PlayerScreen from "../../screens/PlayerScreen";
 
 export default function HomeScreen() {
   return (
