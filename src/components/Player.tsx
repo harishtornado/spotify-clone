@@ -11,12 +11,28 @@ import PlayerScreen from "../screens/PlayerScreen";
 import Slider from "@react-native-community/slider";
 
 const Player = () => {
-  const [sound, setSound] = useState<Sound>();
+  const [sound, setSound] = useState<Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const { track } = usePlayerContext();
   const [status, setStatus] = useState<AVPlaybackStatus | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const handleSliderValueChange = async (value: number) => {
+    if (status === null || !status.isLoaded) {
+      return;
+    }
+    setStatus((prev) => {
+      return { ...prev, positionMillis: value };
+    });
+    try {
+      await sound?.setPositionAsync(value);
+    } catch (error) {
+      console.error("Error while seeking:", error);
+    }
+  };
+
   useEffect(() => {
+    setIsPlaying(false);
     playTrack();
   }, [track]);
 
@@ -41,10 +57,10 @@ const Player = () => {
     await newSound.playAsync();
   };
 
-  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (!status.isLoaded) return;
-    setStatus(status);
-    setIsPlaying(status.isPlaying);
+  const onPlaybackStatusUpdate = (newStatus: AVPlaybackStatus) => {
+    if (!newStatus.isLoaded) return;
+    setStatus(newStatus);
+    setIsPlaying(newStatus.isPlaying);
   };
 
   const onPlayPause = async () => {
@@ -87,18 +103,21 @@ const Player = () => {
       />
       <Ionicons
         onPress={onPlayPause}
+        disabled={!track?.preview_url}
         name={isPlaying ? "pause" : "play"}
-        color={"white"}
         size={25}
         style={{ marginHorizontal: 10 }}
+        color={track?.preview_url ? "white" : "gray"}
       />
       <PlayerScreen
+        sound={sound}
         track={track}
         status={status}
         isVisible={isVisible}
         onClose={() => setIsVisible(false)}
         onPlayPause={onPlayPause}
         isPlaying={isPlaying}
+        onSliderValueChange={handleSliderValueChange}
       />
       <Slider
         style={styles.slider}
@@ -114,3 +133,5 @@ const Player = () => {
 };
 
 export default Player;
+
+// {"androidImplementation": "SimpleExoPlayer", "audioPan": 0, "didJustFinish": false, "durationMillis": 29753, "isBuffering": false, "isLoaded": true, "isLooping": false, "isMuted": false, "isPlaying": false, "playableDurationMillis": 29753, "positionMillis": 6315, "progressUpdateIntervalMillis": 500, "rate": 1, "shouldCorrectPitch": false, "shouldPlay": false, "uri": "/mp3-preview/93b9472ebea8c7759c699b496d6a2d3128b42459", "volume": 1}

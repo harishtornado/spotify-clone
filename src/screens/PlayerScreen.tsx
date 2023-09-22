@@ -1,30 +1,28 @@
 import { useState } from "react";
-import { View, Text, Image, Pressable, Animated } from "react-native";
-import { styles } from "../styles/styles";
-import { tracks } from "../../assets/data/tracks";
+import { View, Text, Image, Pressable } from "react-native";
 import Modal from "react-native-modal";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { AVPlaybackStatus } from "expo-av";
+import { styles } from "../styles/styles";
 
-interface PlayerScreenProps {
-  status: AVPlaybackStatus | null; // Define the correct prop name and type
-}
-
-const PlayerScreen: React.FC<PlayerScreenProps> = ({
+const PlayerScreen = ({
+  sound,
   status,
   isVisible,
   onClose,
   track,
   isPlaying,
   onPlayPause,
+  onSliderValueChange,
 }) => {
-  const formatDuration = (input: number) => {
+  const [isRepeat, setIsRepeat] = useState(false);
+  const formatDuration = (input) => {
     const totalSeconds = Math.floor(input / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    const formattedDuration = `${minutes.toString().padStart(1, "0")}:${seconds
+    const formattedDuration = `${minutes}:${seconds
       .toString()
       .padStart(2, "0")}`;
     return formattedDuration;
@@ -73,17 +71,18 @@ const PlayerScreen: React.FC<PlayerScreenProps> = ({
           style={{ width: "100%", height: 40 }}
           minimumValue={0}
           //@ts-ignore
-          maximumValue={status?.durationMillis}
+          maximumValue={status?.durationMillis ?? 0}
           minimumTrackTintColor="#eee"
           maximumTrackTintColor="#ffffff"
           thumbTintColor="white"
-          value={status?.positionMillis}
+          value={status?.positionMillis ?? 0}
+          onValueChange={onSliderValueChange}
         />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={{ color: "white", fontSize: 12, fontWeight: "900" }}>
             {formatDuration(status?.positionMillis)}
           </Text>
-          <Text style={{ color: "white" }}>
+          <Text style={{ color: "white", fontSize: 12, fontWeight: "900" }}>
             {formatDuration(status?.durationMillis)}
           </Text>
         </View>
@@ -116,10 +115,19 @@ const PlayerScreen: React.FC<PlayerScreenProps> = ({
             source={require("../../assets/icons/next.png")}
             style={styles.PlayerIcon}
           />
-          <Image
-            source={require("../../assets/icons/repeat.png")}
+          <Pressable
+            onPress={() => setIsRepeat(!isRepeat)}
             style={styles.PlayerIcon}
-          />
+          >
+            <Image
+              source={
+                isRepeat
+                  ? require("../../assets/icons/repeat-active.png")
+                  : require("../../assets/icons/repeat.png")
+              }
+              style={{ width: "100%", height: "100%" }}
+            />
+          </Pressable>
         </View>
       </LinearGradient>
     </Modal>
