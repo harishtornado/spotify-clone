@@ -119,15 +119,17 @@ const Player = () => {
         isPlaying={isPlaying}
         onSliderValueChange={handleSliderValueChange}
       />
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={status?.durationMillis}
-        minimumTrackTintColor="#eee"
-        thumbTintColor="transparent"
-        maximumTrackTintColor="#ffffff"
-        value={status?.positionMillis}
-      />
+      {track?.preview_url && (
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={status?.durationMillis}
+          minimumTrackTintColor="#eee"
+          thumbTintColor="transparent"
+          maximumTrackTintColor="#ffffff"
+          value={status?.positionMillis}
+        />
+      )}
     </View>
   );
 };
