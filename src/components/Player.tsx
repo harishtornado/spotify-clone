@@ -79,7 +79,7 @@ const Player = () => {
     <View style={styles.Player}>
       <Pressable
         style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-        onPress={() => setIsVisible(!isVisible)}
+        onPress={() => track?.preview_url !== null && setIsVisible(!isVisible)}
       >
         <Image
           source={{ uri: track.album.images[0]?.url }}
@@ -113,7 +113,7 @@ const Player = () => {
         sound={sound}
         track={track}
         status={status}
-        isVisible={isVisible}
+        isVisible={isVisible && track?.preview_url !== null}
         onClose={() => setIsVisible(false)}
         onPlayPause={onPlayPause}
         isPlaying={isPlaying}
