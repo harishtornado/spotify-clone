@@ -1,7 +1,6 @@
 import { View, Text, Image, Pressable, PressableProps } from "react-native";
 import React, { useEffect, useState } from "react";
 import { styles } from "../styles/styles";
-import { tracks } from "../../assets/data/tracks";
 import { Ionicons } from "@expo/vector-icons";
 import { usePlayerContext } from "../providers/PlayerProvider";
 import { Audio } from "expo-av";
@@ -9,6 +8,35 @@ import { Sound } from "expo-av/build/Audio";
 import { AVPlaybackStatus } from "expo-av/build/AV.types";
 import PlayerScreen from "../screens/PlayerScreen";
 import Slider from "@react-native-community/slider";
+import { gql, useMutation, useQuery } from "@apollo/client";
+
+const insertFavoriteMutation = gql`
+  mutation MyMutation($userId: String!, $trackId: String!) {
+    insertFavorites(trackid: $trackId, userid: $userId) {
+      id
+      trackid
+      userid
+    }
+  }
+`;
+
+const ḍeleteFavoriteMutation = gql`
+  mutation MyMutation($userId: String!, $trackId: String!) {
+    deleteFavorites(trackid: $trackId, userid: $userId) {
+      id
+    }
+  }
+`;
+
+const isFavoriteQuery = gql`
+  query MyQuery($userId: String!, $trackId: String!) {
+    favoritesByTrackidAndUserid(trackid: $trackId, userid: $userId) {
+      id
+      trackid
+      userid
+    }
+  }
+`;
 
 const Player = () => {
   const [sound, setSound] = useState<Sound | null>(null);
@@ -16,6 +44,28 @@ const Player = () => {
   const { track } = usePlayerContext();
   const [status, setStatus] = useState<AVPlaybackStatus | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const { data, refetch } = useQuery(isFavoriteQuery, {
+    variables: { userId: "harish", trackId: track?.id || "" },
+  });
+  const isLiked = data?.favoritesByTrackidAndUserid?.length > 0;
+
+  const [insertFavorite] = useMutation(insertFavoriteMutation);
+  const [deleteFavorite] = useMutation(ḍeleteFavoriteMutation);
+
+  const onLike = async () => {
+    if (!track) return;
+    if (isLiked) {
+      await deleteFavorite({
+        variables: { userId: "harish", trackId: track.id },
+      });
+    } else {
+      await insertFavorite({
+        variables: { userId: "harish", trackId: track.id },
+      });
+    }
+    refetch();
+  };
 
   const handleSliderValueChange = async (value: number) => {
     if (status === null || !status.isLoaded) {
@@ -96,7 +146,8 @@ const Player = () => {
         </View>
       </Pressable>
       <Ionicons
-        name={"heart-outline"}
+        onPress={onLike}
+        name={isLiked ? "heart" : "heart-outline"}
         color={"white"}
         size={25}
         style={{ marginHorizontal: 10 }}

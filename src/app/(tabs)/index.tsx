@@ -36,7 +36,6 @@ export default function HomeScreen() {
   });
 
   const tracks = data?.recommendations?.tracks || [];
-  console.log(tracks);
 
   return (
     <SafeAreaView style={styles.container}>

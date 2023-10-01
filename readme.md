@@ -80,7 +80,6 @@ curl -X POST "https://accounts.spotify.com/api/token" \
         stepzen import \
             curl "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl" \
             --header "Authorization: Bearer BQD16_S9HrUEpXmqiG0acJvaFKkd9M3G8Qy9_O00HO0RUNFzeQK5EZzxuqmQSbC-fcyRJZJ2fLtZ_gkEJbGYszZCqWw-JY7FzJCMqcDl0UxSpsjmGk0" \
-            --path-params "/v1/tracks/\$trackId"  \
             --query-name "getTrack" \
             --query-type "TrackResponse" \
             --name "track" \

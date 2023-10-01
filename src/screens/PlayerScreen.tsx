@@ -4,7 +4,6 @@ import Modal from "react-native-modal";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { AVPlaybackStatus } from "expo-av";
 import { styles } from "../styles/styles";
 
 const PlayerScreen = ({

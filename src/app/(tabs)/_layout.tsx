@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { View, useColorScheme } from "react-native";
 import { BottomTabBar } from "@react-navigation/bottom-tabs";
 
